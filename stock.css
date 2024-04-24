@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+  }
+  
+  .left-frame, .right-frame {
+    height: 100%;
+    overflow: auto;
+    background-color: lightgrey;
+  }
+  
+  .left-frame {
+    width: 12%;
+    background-color: lightgrey;
+    padding: 20px;
+  }
+  
+  .right-frame {
+    width: 88%;
+  }
