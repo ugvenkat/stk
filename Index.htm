@@ -23,17 +23,62 @@
     <br>
 	<a href="https://www.tradingview.com/markets/world-stocks/worlds-largest-employers/" target="_blank">Large Employer</a> &nbsp;&nbsp;<br>
 	<a href="https://www.yieldmaxetfs.com/distribution-schedule/#covered-call" target="_blank">YieldMax Schd</a><br>
+	
+	<b>Fundamental Due Diligence</b><br>
+	<a href="http://finance.yahoo.com" target="_blank">Yahoo Fin</a><br>
+	<a href="http://finance.google.com" target="_blank">google Fin</a><br>
+	<a href="https://www.dowjones.com/smartmoney/" target="_blank">Smartmoney</a><br>
+	<a href="https://www.dowjones.com/professional/factiva/" target="_blank">factiva</a><br>
+	<a href="https://www.earningswhispers.com/" target="_blank">earningswhispers</a><br>
+	<a href="http://money.cnn.com" target="_blank">CNN money</a><br>
+	<a href="http://moneycentral.msn.com" target="_blank">moneycentral</a><br>
+	<a href="https://www.zacks.com/" target="_blank">Zacks</a><br>
+	<a href="https://www.bloomberg.com/" target="_blank">bloomberg</a><br>
 
+	<b>Economic Due Diligence</b><br>
+	<a href="www.briefing.com" target="_blank">briefing</a><br>
+	<a href="www.cboe.com" target="_blank">cboe</a><br>
+	<a href="http://money.cnn.com" target="_blank">CNN money</a><br>
+	<a href="www.wsj.com" target="_blank">Wall Street Journal</a><br>
+	<a href="www.investors.com" target="_blank">Investors</a><br>
 
-	<h2>Temp Notes</h2>
+	<b>Sentimental Due Diligence</b><br>
+	<a href="www.cboe.com" target="_blank">cboe</a><br>
+	<a href="www.investors.com" target="_blank">Investors</a><br>
+	<a href="https://www.schaeffersresearch.com/" target="_blank">schaeffersresearch</a><br>
+
+	<b>Information Resources</b><br>
+	<a href="http://finance.yahoo.com" target="_blank">Yahoo Key Stats</a><br>
+	<a href="www.bigcarts.com" target="_blank">P/E Ratio Over Time</a><br>
+	<a href="http://finance.yahoo.com" target="_blank">Yahoo Competitor Analysis</a><br>
+	<a href="www.quicken.com" target="_blank">Comparative Analysis</a><br>
+	<a href="www.zacks.com" target="_blank">earnings estimates</a><br>
+	<a href="www.earningswhispers.com" target="_blank">Earnings Whispers</a><br>
+
+	<b>Economic Resources</b><br>
+	<a href="http://moneycentral.msn.com/investor/calendar/current.asp" target="_blank">msn money economic data</a><br>
+	<a href="http://money.cnn.com/markets/IRC/index.html" target="_blank">cnn money investor research</a><br>
+	<a href="www.conference-board.org/Economics/consumerconfidence.cfm" target="_blank">consumer confidence index</a><br>
+	<a href="http://stass.bls.gov/news.release/empsit.nro.htm" target="_blank">employement sitation summary</a><br>
+	<a href="http://www.consus.gov/marts/www/marts.html" target="_blank">retail sales data</a><br>
+	<a href="www.bea.gov" target="_blank">gross demestic product</a><br>
+	<a href="www.consus.gov/const/www/newresconstindex.html" target="_blank">housing starts</a><br>
+	<a href="" target="_blank"></a><br>
+	<a href="" target="_blank"></a><br>
+
 	<a href="https://www.youtube.com/playlist?list=PLHcK1aav-jMYIv2p-uWO9XQFg2uFBA1UN" target="_blank">Day Trade Tips</a><br>
 	<a href="https://etfdb.com/" target="_blank">https://etfdb.com/</a><br>
+	<a href="https://youtu.be/XkNqYU4HJM8" target="_blank">Hidden Trading Pattern</a><br>
+	<a href="https://www.youtube.com/watch?v=UW8sbA2HUXE" target="_blank">Swing Multiday Runners</a><br>
 
+	<a href="https://gemini.google.com" target="_blank">gemini</a><br>
+    <a href="https://copilot.microsoft.com/" target="_blank">copilot</a><br>
+	<a href="https://claude.ai" target="_blank">claude</a><br>
+	<a href="https://www.perplexity.ai/" target="_blank">perplexity</a><br>
 
-	<H2>Youtube</H2>
+	<B>Youtube</B>
 	<a href="https://www.youtube.com/watch?v=RCVCL7UQDOs" target="_blank">Why SPY is Best</a><br>
 	<a href="https://www.youtube.com/watch?v=HahsZrjSYpw" target="_blank">Trade SPY</a><br>
-	
 
 	<br>
 	<B>Bull/Bear</B>
@@ -73,9 +118,11 @@
   <br>
   <label for="name">&nbsp;Ticker</label>
 	<input type="text" id="stockName" name="stockName" size="8" onkeypress="return searchKeyPress(event);" />
-	<input type="button" onclick="SingleStockAnalysis()" value="Submit" /> &nbsp;
+	<input type="button" onclick="SingleStockAnalysis()" value="submit" /> &nbsp;
+	<input type="button" onclick="SingleStockYahooAnalysis()" value="Yahoo Analysis" /> &nbsp;
 	<input type="button" onclick="News()" value="News"/>  &nbsp;
 	<input type="button" onclick="Own()" value="Own" /> &nbsp;
+	<input type="button" onclick="Parkev()" value="Parkev" /> &nbsp;
 	<input type="button" onclick="Watch()" value="Watch" /> &nbsp;
   <input type="button" onclick="YMaxGood()" value="YM Good" /> &nbsp;
   <input type="button" onclick="YMaxBad()" value="YM Bad"/>  &nbsp;
@@ -117,7 +164,76 @@
 				<img src="./images/meme_DailyGoal.JPG" width="400" height="300">			
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<img src="./images/BreakAwayGap.JPG" width="500" height="300">
+				<img src="./images/RunAwayGap.JPG" width="500" height="300">
+				<img src="./images/ExhaustionGap.JPG" width="400" height="300">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="./images/MovingAverage.JPG" width="500" height="300">
+				<img src="./images/BuySignalMA.JPG" width="500" height="300">
+				<img src="./images/SellSignalMA.JPG" width="400" height="300">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="./images/CPI.JPG" width="500" height="300">
+				<img src="./images/EmployementSituationReport.JPG" width="500" height="300">
+				<img src="./images/PPI.JPG" width="400" height="300">
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<img src="./images/BeigeBook.JPG" width="500" height="300">
+				<img src="./images/GDP.JPG" width="500" height="300">
+				<img src="./images/HousingStarts.JPG" width="400" height="300">
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<img src="./images/FedLowering.JPG" width="500" height="300">
+				<img src="./images/fedHiking.JPG" width="500" height="300">
+				<img src="./images/HousingStarts.JPG" width="400" height="300">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="./images/WrongAtEnds.JPG" width="500" height="300">
+				<img src="./images/Senti1.JPG" width="500" height="300">
+				<img src="./images/Senti2.JPG" width="400" height="300">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="./images/StockMarketDrop.JPG" width="500" height="300">
+				<img src="./images/volatilityIndexAndMarket.JPG" width="500" height="300">
+				<img src="./images/PutCallindex.JPG" width="400" height="300">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="./images/Bearish.JPG" width="500" height="300">
+				<img src="./images/PutCallRatio.JPG" width="500" height="300">
+				<img src="./images/PutCallindex.JPG" width="400" height="300">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="./images/StockDrop.JPG" width="500" height="300">
+				<img src="./images/DontLooseMoney.JPG" width="500" height="300">
+				<img src="./images/PutCallindex.JPG" width="400" height="300">
+			</td>
+		</tr>
+
+		
+		
 	</table>
+
+	
+
   </div>
 
   <script>
@@ -149,7 +265,9 @@
 			"https://search.yahoo.com/search?p=${stockName}",
 			"https://valueinvesting.io/${stockName}/valuation/wacc",
 			"https://wallmine.com/nasdaq/${stockName}",
-			"https://www.dataroma.com/m/stock.php?sym=${stockName}"
+			"https://www.dataroma.com/m/stock.php?sym=${stockName}",
+			"https://finance.yahoo.com/quote/${stockName}/insider-transactions"
+
 			/*
 			"https://www.marketbeat.com/pages/search.aspx?query=${stockName}",
 			"https://www.barchart.com/stocks/quotes/${stockName}/earnings-estimates",
@@ -161,6 +279,36 @@
 			"https://www.barchart.com/stocks/quotes/${stockName}/comparison",
 			"https://www.barchart.com/stocks/quotes/${stockName}/overview",
 			*/
+		];
+
+		baseURLs.forEach(url => { 
+			window.open(url.replace("${stockName}", stockName), "_blank");
+			});
+	}
+
+	function SingleStockYahooAnalysis() 
+	{
+		const stockNameInput = document.getElementById("stockName");
+		const stockName = stockNameInput.value;
+		const baseURLs = [
+			"https://tradingeconomics.com/calendar",
+			"https://finance.yahoo.com/quote/${stockName}/insider-transactions",
+			"https://finance.yahoo.com/quote/${stockName}",
+			"https://finance.yahoo.com/quote/${stockName}/news",
+			"https://finance.yahoo.com/quote/${stockName}/chart",
+			"https://finance.yahoo.com/quote/${stockName}/key-statistics",
+			"https://finance.yahoo.com/quote/${stockName}/history",
+			"https://finance.yahoo.com/quote/${stockName}/history?filter=div",
+			"https://finance.yahoo.com/quote/${stockName}/profile",
+			"https://finance.yahoo.com/quote/${stockName}/financials",
+			"https://finance.yahoo.com/quote/${stockName}/balance-sheet",
+			"https://finance.yahoo.com/quote/${stockName}/cash-flow",
+			"https://finance.yahoo.com/quote/${stockName}/analysis",
+			"https://finance.yahoo.com/quote/${stockName}/options",
+			"https://finance.yahoo.com/quote/${stockName}/holders",
+			"https://finance.yahoo.com/quote/${stockName}/sustainability"
+
+
 		];
 
 		baseURLs.forEach(url => { 
@@ -190,7 +338,11 @@
 
 
 	function Own() {
-		openStockPages(["APLY","TSLY","NFLY","NVDY","CONY","NVDA","NFLX"]);
+		openStockPages(["APLY","TSLY","NFLY","NVDY","CONY","ULTY","NVDA","NFLX","OARK"]);
+	}
+
+	function Parkev() {
+		openStockPages(["DIS","GOOG","NVDA","V","PYPL","FVRR","NFLX","BABA","UBER","AMZN","TGT","EBAY","ZM","CHWY","META","AMD","SNAP","KO","HD","SIX","CRM","NKE"]);
 	}
 
 	function Watch() {
