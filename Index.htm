@@ -23,6 +23,8 @@
     <br>
 	<a href="https://www.tradingview.com/markets/world-stocks/worlds-largest-employers/" target="_blank">Large Employer</a> &nbsp;&nbsp;<br>
 	<a href="https://www.yieldmaxetfs.com/distribution-schedule/#covered-call" target="_blank">YieldMax Schd</a><br>
+	<a href="https://www.sec.gov/Archives/edgar/data/1689873/000149315224021419/form485apos.htm" target="_blank">YieldBoost</a><br>
+	
 	
 	<b>Fundamental Due Diligence</b><br>
 	<a href="http://finance.yahoo.com" target="_blank">Yahoo Fin</a><br>
@@ -50,7 +52,7 @@
 	<b>Information Resources</b><br>
 	<a href="http://finance.yahoo.com" target="_blank">Yahoo Key Stats</a><br>
 	<a href="www.bigcarts.com" target="_blank">P/E Ratio Over Time</a><br>
-	<a href="http://finance.yahoo.com" target="_blank">Yahoo Competitor Analysis</a><br>
+	<a href="https://finance.yahoo.com/compare" target="_blank">Yahoo Competitor Analysis</a><br>
 	<a href="www.quicken.com" target="_blank">Comparative Analysis</a><br>
 	<a href="www.zacks.com" target="_blank">earnings estimates</a><br>
 	<a href="www.earningswhispers.com" target="_blank">Earnings Whispers</a><br>
@@ -327,6 +329,13 @@
 	}
 
 	function YMaxBad() {
+		const baseUrl = "https://finance.yahoo.com/quote/";
+		const urlSuffix = "/history?filter=div";
+		openDividendHistoryPages(["TSLY", "APLY", "GOOY", "DISO", "XOMO", "JPMO", "PYPY", "AIYY", "SQY", "AMDY", "YMAG", "YMAX", "MRNY"], baseUrl,urlSuffix );
+	}
+
+
+	function YMall() {
 		const baseUrl = "https://finance.yahoo.com/quote/";
 		const urlSuffix = "/history?filter=div";
 		openDividendHistoryPages(["TSLY", "APLY", "GOOY", "DISO", "XOMO", "JPMO", "PYPY", "AIYY", "SQY", "AMDY", "YMAG", "YMAX", "MRNY"], baseUrl,urlSuffix );
