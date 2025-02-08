@@ -1,0 +1,448 @@
+using OfficeOpenXml;   
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Numerics;
+using System;
+using System.Linq;
+using System.IO;
+using System.Collections.Generic;
+using ExcelDataReader;
+using ClosedXML.Excel;
+
+// Install EPPlus  ExcelDataReader ClosedXML.Excel  Newtonsoft.Json
+
+namespace ExcelFileProcessor
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Register the CodePagesEncodingProvider
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            // Set the license context for EPPlus
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            // Read configuration settings
+            string configFilePath = @"C:\BarchartData\Technical-Google-Download\config.json";
+            if (!File.Exists(configFilePath))
+            {
+                Console.WriteLine("Configuration file not found!");
+                return;
+            }
+            var config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configFilePath));
+
+            // Ensure output directory exists
+            Directory.CreateDirectory(config.OutputDirectory);
+
+            // Read all Excel files from the specified directory
+            string[] excelFiles = Directory.GetFiles(config.InputDirectory, "*.csv", SearchOption.TopDirectoryOnly);
+            var combinedTable = new DataTable();
+
+            // Initialize the combined DataTable with column names
+            combinedTable.Columns.AddRange(new DataColumn[]
+            {
+                new DataColumn("Symbol", typeof(string)),
+                new DataColumn("Name", typeof(string)),
+                new DataColumn("Opinion", typeof(string)),
+                new DataColumn("Last", typeof(decimal)),
+                new DataColumn("10D MA", typeof(decimal)),
+                new DataColumn("20D MA", typeof(decimal)),
+                new DataColumn("50D MA", typeof(decimal)),
+                new DataColumn("100D MA", typeof(decimal)),
+                new DataColumn("200D MA", typeof(decimal)),
+                new DataColumn("20D Avg Vol", typeof(decimal)),
+                new DataColumn("14D Rel Str", typeof(decimal)),
+                new DataColumn("1st Sup", typeof(decimal)),
+                new DataColumn("1st Res", typeof(decimal)),
+                new DataColumn("52W Low", typeof(decimal)),
+                new DataColumn("52W High", typeof(decimal)),
+                new DataColumn("Net Income(a)", typeof(string)),
+                new DataColumn("Analyst Rating", typeof(decimal)),
+                new DataColumn("# Analysts", typeof(int)),
+                new DataColumn("Chg/ATR", typeof(decimal)),
+                new DataColumn("FromFile", typeof(string))
+            });
+
+            foreach (var file in excelFiles)
+            {
+                Console.WriteLine($"Processing file: {Path.GetFileName(file)}");
+
+                // Load CSV into DataTable
+                var table = LoadCsvAsDataTable(file, combinedTable.Columns);
+                if (table.Rows.Count == 0) continue;
+
+                // Add FromFile column
+                string category = GetCategoryFromFilename(Path.GetFileName(file));
+                foreach (DataRow row in table.Rows)
+                {
+                    row["FromFile"] = category;
+                }
+
+                //// Filter rows based on thresholds and add to combined table
+                foreach (DataRow row in table.Rows)
+                {
+                    if (
+                        !row["Name"].ToString().ToLower().Contains("therapeutics") &&
+                        !row["Name"].ToString().ToLower().Contains("pharma") &&
+                        !row["Name"].ToString().ToLower().Contains("bio") &&
+                        !row["Name"].ToString().ToLower().Contains(" adr") &&
+                        Convert.ToDecimal(row["20D Avg Vol"]) >= config.Avg20DThreshold)
+                    {
+                        combinedTable.ImportRow(row);
+                    }
+                }
+
+                // Write therapeutics/pharma rows to a separate file
+                var therapeuticsPharmaRows = table.AsEnumerable()
+                    .Where(row =>
+                        row["Name"].ToString().ToLower().Contains("therapeutics") ||
+                        row["Name"].ToString().ToLower().Contains("pharma") ||
+                        row["Name"].ToString().ToLower().Contains("bio") ||
+                        row["Name"].ToString().ToLower().Contains(" adr"))
+                    .CopyToDataTableOrEmpty();
+
+                if (therapeuticsPharmaRows.Rows.Count > 0)
+                {
+                    string outputFile = Path.Combine(config.OutputDirectory, $"Therapeutics-Pharma-{DateTime.Now:yyyyMMddHHmm}.xlsx");
+                    WriteToExcel(therapeuticsPharmaRows, outputFile);
+                    //process(outputFile);
+                }
+            }
+
+            // Write combined data to Excel
+            string combinedOutputFile = Path.Combine(config.OutputDirectory, $"Combined-{DateTime.Now:yyyyMMddHHmm}.xlsx");
+            WriteToExcel(SortByLastColumn(combinedTable, 0), combinedOutputFile);
+            process(combinedOutputFile);
+        }
+
+        // Get category from filename using pattern matching
+        static string GetCategoryFromFilename(string fileName)
+        {
+            fileName = fileName.ToLower();
+
+            if (fileName.Contains("pre-market-most-active"))
+                return "pre-active";
+            else if (fileName.Contains("pre-market-gainers"))
+                return "pre-gainers";
+            else if (fileName.Contains("pre-market-gap-up"))
+                return "pre-gapup";
+            else if (fileName.Contains("post-market-most-active"))
+                return "pst-active";
+            else if (fileName.Contains("post-market-gainers"))
+                return "pst-gainers";
+            else if (fileName.Contains("post-market-gap-up"))
+                return "pst-gapup";
+            else if (fileName.Contains("all-us-exchanges-volume-leaders"))
+                return "vol-ldr";
+            else if (fileName.Contains("all-us-exchanges-price-volume-leaders"))
+                return "price-vol-ldr";
+            else if (fileName.Contains("all-us-exchanges-volume-percent-advances"))
+                return "vol-pcent-advance";
+            else if (fileName.Contains("all-us-exchanges-top-trading-liquidity"))
+                return "liquidity";
+            else
+                return "unknown";
+        }
+
+        static DataTable FilterPharmaAndBio(DataTable dataTable)
+        {
+            // Create a new DataTable with the same structure
+            DataTable pharmaAndBioTable = dataTable.Clone();
+
+            // Set the primary key for the cloned DataTable
+            pharmaAndBioTable.PrimaryKey = new DataColumn[] { pharmaAndBioTable.Columns["Symbol"] };
+
+            // Filter rows where the Name contains "Therapeutics", "Pharma", or "Bio"
+            foreach (DataRow row in dataTable.Rows)
+            {
+                string name = row["Name"].ToString().ToLower();
+                if ((name.Contains("therapeutics") || name.Contains("pharma") || name.Contains(" adr") || name.Contains("bio")) && !pharmaAndBioTable.Rows.Contains(row["Symbol"]))
+                {
+                    pharmaAndBioTable.ImportRow(row);
+                }
+            }
+
+            // Sort the DataTable by the "Last" column
+            pharmaAndBioTable.DefaultView.Sort = "Last ASC";
+            pharmaAndBioTable = pharmaAndBioTable.DefaultView.ToTable();
+
+            // Remove duplicates
+            var uniqueRows = pharmaAndBioTable.AsEnumerable().Distinct(DataRowComparer.Default);
+            DataTable uniquePharmaAndBioTable = pharmaAndBioTable.Clone();
+            foreach (var row in uniqueRows)
+            {
+                uniquePharmaAndBioTable.ImportRow(row);
+            }
+
+            return uniquePharmaAndBioTable;
+        }
+
+        static DataTable ExcludePharmaAndBio(DataTable dataTable)
+        {
+            // Create a new DataTable with the same structure
+            DataTable mainData = dataTable.Clone();
+
+            // Filter out rows where the Name contains "Therapeutics", "Pharma", or "Bio"
+            foreach (DataRow row in dataTable.Rows)
+            {
+                string name = row["Name"].ToString().ToLower();
+                if (!(name.Contains("therapeutics") || name.Contains("pharma") || name.Contains(" adr") || name.Contains("bio")))
+                {
+                    mainData.ImportRow(row);
+                }
+            }
+            return mainData;
+        }
+
+        // Sort a DataTable by the last column
+        static DataTable SortByLastColumn(DataTable table, int columnSortIndex)
+        {
+            string lastColumnName = table.Columns[columnSortIndex].ColumnName;
+            var sortedRows = table.AsEnumerable().OrderBy(row => row[lastColumnName]);
+
+            DataTable sortedTable = table.Clone();
+            foreach (var row in sortedRows)
+            {
+                sortedTable.ImportRow(row);
+            }
+            return sortedTable;
+        }
+
+        static DataTable LoadCsvAsDataTable(string filePath, DataColumnCollection columns)
+        {
+            var table = new DataTable();
+            foreach (DataColumn column in columns)
+            {
+                table.Columns.Add(column.ColumnName, column.DataType);
+            }
+
+            var lines = File.ReadAllLines(filePath);
+
+            // Return empty table if file has less than 2 lines (header and at least one row)
+            if (lines.Length < 2) return table;
+
+            // Process lines except the last one
+            foreach (var line in lines.Skip(1).Take(lines.Length - 2)) // Skip header and exclude last line
+            {
+                var values = line.Split(',');
+                var row = table.NewRow();
+
+                for (int i = 0; i < values.Length && i < table.Columns.Count; i++)
+                {
+                    if (columns[i].ColumnName == "14D Rel Str" && !string.IsNullOrEmpty(values[i]))
+                    {
+                        // Remove '%' sign and parse as decimal
+                        row[i] = decimal.TryParse(values[i].Replace("%", ""), out var value) ? value : 0;
+                    }
+                    else if (columns[i].DataType == typeof(decimal))
+                    {
+                        // Parse numeric columns
+                        row[i] = decimal.TryParse(values[i], out var value) ? value : 0;
+                    }
+                    else
+                    {
+                        // Assign non-numeric values directly
+                        row[i] = values[i];
+                    }
+                }
+
+                table.Rows.Add(row);
+            }
+            return table;
+        }
+
+        public static void process(string Excelfilename)
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            var stockData = new Dictionary<string, StockInfo>();
+
+            using (var stream = File.Open(Excelfilename, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var result = reader.AsDataSet();
+                    var table = result.Tables[0];
+
+                    // Get column indexes
+                    var columnIndexes = GetColumnIndexes(table);
+
+                    // Process data rows
+                    for (int row = 1; row < table.Rows.Count; row++)
+                    {
+                        var rowData = table.Rows[row];
+                        string symbol = rowData[columnIndexes["Symbol"]].ToString();
+
+                        if (!stockData.ContainsKey(symbol))
+                        {
+                            stockData[symbol] = new StockInfo
+                            {
+                                Symbol = symbol,
+                                Name = rowData[columnIndexes["Name"]].ToString(),
+                                Opinion = rowData[columnIndexes["Opinion"]].ToString(),
+                                Last = Convert.ToDouble(rowData[columnIndexes["Last"]]),
+                                TenDMA = Convert.ToDouble(rowData[columnIndexes["10D MA"]]),
+                                TwentyDMA = Convert.ToDouble(rowData[columnIndexes["20D MA"]]),
+                                FiftyDMA = Convert.ToDouble(rowData[columnIndexes["50D MA"]]),
+                                HundredDMA = Convert.ToDouble(rowData[columnIndexes["100D MA"]]),
+                                TwoHundredDMA = Convert.ToDouble(rowData[columnIndexes["200D MA"]]),
+                                TwentyDAvgV = Convert.ToDouble(rowData[columnIndexes["20D Avg Vol"]]),
+                                FourteenDRelSt = Convert.ToDouble(rowData[columnIndexes["14D Rel Str"]]),
+                                FirstSup = Convert.ToDouble(rowData[columnIndexes["1st Sup"]]),
+                                FirstRes = Convert.ToDouble(rowData[columnIndexes["1st Res"]]),
+                                FiftyTwoWLow = Convert.ToDouble(rowData[columnIndexes["52W Low"]]),
+                                FiftyTwoWHigh = Convert.ToDouble(rowData[columnIndexes["52W High"]]),
+                                NetIncome = Convert.ToDouble(rowData[columnIndexes["Net Income(a)"]]),
+                                AnalystRating = Convert.ToDouble(rowData[columnIndexes["Analyst Rating"]]),
+                                AnalystCount = Convert.ToInt32(rowData[columnIndexes["# Analysts"]]),
+                                ATR = Convert.ToDouble(rowData[columnIndexes["Chg/ATR"]])
+                            };
+                        }
+                        stockData[symbol].FromFiles.Add(rowData[columnIndexes["FromFile"]].ToString());
+                    }
+                }
+            }
+
+            // Sort by Last column and create new Excel file
+            var sortedStocks = stockData.Values.OrderBy(s => s.Last);
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Processed Data");
+
+                // Add headers
+                worksheet.Cell(1, 1).Value = "Symbol";
+                worksheet.Cell(1, 2).Value = "Name";
+                worksheet.Cell(1, 3).Value = "Opinion";
+                worksheet.Cell(1, 4).Value = "Last";
+                worksheet.Cell(1, 5).Value = "10D MA";
+                worksheet.Cell(1, 6).Value = "20D MA";
+                worksheet.Cell(1, 7).Value = "50D MA";
+                worksheet.Cell(1, 8).Value = "100D MA";
+                worksheet.Cell(1, 9).Value = "200D MA";
+                worksheet.Cell(1, 10).Value = "20D Avg Vol";
+                worksheet.Cell(1, 11).Value = "14D Rel St";
+                worksheet.Cell(1, 12).Value = "1st Sup";
+                worksheet.Cell(1, 13).Value = "1st Res";
+                worksheet.Cell(1, 14).Value = "52W Low";
+                worksheet.Cell(1, 15).Value = "52W High";
+                worksheet.Cell(1, 16).Value = "Net Income";
+                worksheet.Cell(1, 17).Value = "Analyst Rating";
+                worksheet.Cell(1, 18).Value = "# Analysts";
+                worksheet.Cell(1, 19).Value = "ATR";
+                worksheet.Cell(1, 20).Value = "FromFiles";
+
+                // Add data
+                int row = 2;
+                foreach (var stock in sortedStocks)
+                {
+                    worksheet.Cell(row, 1).Value = stock.Symbol;
+                    worksheet.Cell(row, 2).Value = stock.Name;
+                    worksheet.Cell(row, 3).Value = stock.Opinion;
+                    worksheet.Cell(row, 4).Value = stock.Last;
+                    worksheet.Cell(row, 4).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 5).Value = stock.TenDMA;
+                    worksheet.Cell(row, 5).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 6).Value = stock.TwentyDMA;
+                    worksheet.Cell(row, 6).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 7).Value = stock.FiftyDMA;
+                    worksheet.Cell(row, 7).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 8).Value = stock.HundredDMA;
+                    worksheet.Cell(row, 8).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 9).Value = stock.TwoHundredDMA;
+                    worksheet.Cell(row, 9).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 10).Value = stock.TwentyDAvgV;
+                    worksheet.Cell(row, 10).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 11).Value = stock.FourteenDRelSt;
+                    worksheet.Cell(row, 11).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 12).Value = stock.FirstSup;
+                    worksheet.Cell(row, 12).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 13).Value = stock.FirstRes;
+                    worksheet.Cell(row, 13).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 14).Value = stock.FiftyTwoWLow;
+                    worksheet.Cell(row, 14).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 15).Value = stock.FiftyTwoWHigh;
+                    worksheet.Cell(row, 15).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 16).Value = stock.NetIncome;
+                    worksheet.Cell(row, 16).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 17).Value = stock.AnalystRating;
+                    worksheet.Cell(row, 17).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 18).Value = stock.AnalystCount;
+                    worksheet.Cell(row, 19).Value = stock.ATR;
+                    worksheet.Cell(row, 19).Style.NumberFormat.Format = "0.00";
+                    worksheet.Cell(row, 20).Value = string.Join(",", stock.FromFiles);
+                    row++;
+                }
+
+                worksheet.Columns().AdjustToContents();   // Auto-fit columns
+                workbook.SaveAs(Excelfilename +"processed_stocks.xlsx"); // Save the workbook
+            }
+
+            Console.WriteLine("Processing complete. Results saved to 'processed_stocks.xlsx'");
+        }
+
+        private static Dictionary<string, int> GetColumnIndexes(DataTable table)
+        {
+            var indexes = new Dictionary<string, int>();
+            for (int i = 0; i < table.Columns.Count; i++)
+            {
+                indexes[table.Rows[0][i].ToString()] = i;
+            }
+            return indexes;
+        }
+
+        // Write a DataTable to an Excel file
+        static void WriteToExcel(DataTable table, string filePath)
+        {
+            using var package = new ExcelPackage();
+            var sheet = package.Workbook.Worksheets.Add("Data");
+            sheet.Cells["A1"].LoadFromDataTable(table, true);
+            package.SaveAs(new FileInfo(filePath));
+        }
+    }
+
+    public class Config
+    {
+        public string InputDirectory { get; set; }
+        public string OutputDirectory { get; set; }
+        public decimal Avg20DThreshold { get; set; }
+    }
+
+    public class StockInfo
+    {
+        public string Symbol { get; set; }
+        public string Name { get; set; }
+        public string Opinion { get; set; }
+        public double Last { get; set; }
+        public double TenDMA { get; set; }
+        public double TwentyDMA { get; set; }
+        public double FiftyDMA { get; set; }
+        public double HundredDMA { get; set; }
+        public double TwoHundredDMA { get; set; }
+        public double TwentyDAvgV { get; set; }
+        public double FourteenDRelSt { get; set; }
+        public double FirstSup { get; set; }
+        public double FirstRes { get; set; }
+        public double FiftyTwoWLow { get; set; }
+        public double FiftyTwoWHigh { get; set; }
+        public double NetIncome { get; set; }
+        public double AnalystRating { get; set; }
+        public int AnalystCount { get; set; }
+        public double ATR { get; set; }
+        public HashSet<string> FromFiles { get; set; } = new HashSet<string>();
+    }
+
+    public static class Extensions
+    {
+        public static DataTable CopyToDataTableOrEmpty(this IEnumerable<DataRow> rows)
+        {
+            if (rows == null || !rows.Any()) return new DataTable();
+            return rows.CopyToDataTable();
+        }
+    }
+}

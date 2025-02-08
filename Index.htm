@@ -15,20 +15,27 @@
 </head>
 	
 <body>
-
 	<div class="left-frame">
- 
     <br>
 	<a href="https://www.youtube.com/watch?v=5pJzByyBFYI" target="_blank">Why u Fail</a><br> 
 	<a href="https://tradingview.com/" target="_blank">TradingView</a><br>
 	<a href="https://tradingeconomics.com/calendar" target="_blank">Economic Calendar</a><br>
 	<a href="https://www.cnn.com/markets/fear-and-greed" target="_blank">Fear & Grade</a><br>
 	<a href="https://www.yieldmaxetfs.com/distribution-schedule" target="_blank">YieldMax Schd</a><br>
-	<a href="https://www.barchart.com/options/most-active/stocks?orderBy=optionsTotalVolume&orderDir=desc" target="_blank">Active Options</a><br><br>
+	<a href="https://www.barchart.com/options/most-active/stocks?orderBy=optionsTotalVolume&orderDir=desc" target="_blank">Active Options</a><br>
+	<a href="https://tradethatswing.com/" target="_blank">TradeThatSwing</a><br>
+	<a href="https://go.microsoft.com/fwlink/p/?LinkID=2127058&clcid=0x409&culture=en-us&country=us" target="_blank">Excel</a><br>
+	<a href="https://galeapps.gale.com/apps/udemy/auth?userGroupName=txshrpub100250" target="_blank">Gale-Udemy</a><br>
+	<a href="https://gale.udemy.com/home/my-courses/learning/?instructor_filter=81053852" target="_blank">Udemy-Jayce</a><br>
+	<a href="https://gale.udemy.com/home/my-courses/learning/?instructor_filter=5207370" target="_blank">Udemy-Kal-Options</a><br>
+
+
+	<a href="https://www.streetinsider.com/	" target="_blank">StreetInsider</a><br><br>
 	
+
 	<b>AI Links</b>
 	<a href="https://gemini.google.com" target="_blank">gemini</a><br>
-    <a href="https://copilot.microsoft.com/" target="_blank">copilot</a><br>
+    	<a href="https://copilot.microsoft.com/" target="_blank">copilot</a><br>
 	<a href="https://claude.ai" target="_blank">claude</a><br>
 	<a href="https://www.perplexity.ai/" target="_blank">perplexity</a><br>
 	
@@ -153,6 +160,14 @@
   <label for="name">&nbsp;Ticker</label>
 	<input type="text" id="stockName" name="stockName" size="8" onkeypress="return searchKeyPress(event);" />
 	<input type="button" onclick="SingleStockAnalysis()" value="submit" /> &nbsp;
+	
+	<!-- Barchart Analysis -->
+	<input type="button" onclick="BarChartTechnical()" value="BarChart Tech" /> &nbsp;
+	<input type="button" onclick="BarChartMovingAverage()" value="BarChart MA" /> &nbsp;
+	
+	
+	
+	
 	<input type="button" onclick="SingleStockYahooAnalysis()" value="Yahoo Analysis" /> &nbsp;
 	<input type="button" onclick="News()" value="News"/>  &nbsp;
 	<input type="button" onclick="Own()" value="Own" /> &nbsp;
@@ -161,6 +176,17 @@
 	<input type="button" onclick="Watch()" value="Watch" /> &nbsp;
   <input type="button" onclick="YMaxGood()" value="YM Good" /> &nbsp;
   <input type="button" onclick="YMaxBad()" value="YM Bad"/>  &nbsp;
+  <br>
+  <input type="button" onclick="OptionAnalysis1()" value="Option 1" /> &nbsp;
+  <input type="button" onclick="OptionAnalysis2()" value="Option 2" /> &nbsp;
+  <input type="button" onclick="OptionAnalysis3()" value="Option 3" /> &nbsp;
+  <input type="button" onclick="OptionAnalysis4()" value="Option 4" /> &nbsp;
+  <input type="button" onclick="OptionAnalysis5()" value="Option 5" /> &nbsp;
+  <input type="button" onclick="OptionAnalysis6()" value="Option 6" /> &nbsp;
+  <input type="button" onclick="OptionAnalysis7()" value="Option 7" /> &nbsp;
+  
+  
+  
 
   <br>
 	<table>
@@ -363,6 +389,35 @@
 	}
 
 
+
+	function OptionAnalysis1() {
+		openOptionPages(["F","SNAP","RIOT","AAL","SOFI","M","LYFT","KSS","HPE","T","INTC","CCL","PFE","MARA","NCLH"]);
+			
+	}	
+
+	function OptionAnalysis2() {
+		openOptionPages(["GME","MRO","KHC","HAL","LUV","CHWY","HPQ","MRNA","FLEX","DKNG","VZ","CMCSA","OXY","MO","CVS"]);
+	}	
+
+	function OptionAnalysis3() {
+		openOptionPages(["GM","CSCO","BMY","TPR","CMG","DAL","KO","PLTR","WDC","MCHP","C","UBER","LRCX","UPST","WFC"]);
+	}	
+
+	function OptionAnalysis4() {
+		openOptionPages(["NKE","BIDU","SCHW","BABA","MDT","PYPL","WMT","SQ","MRVL","UAL","MRK","PDD","SBUX","MU","SHOP"]);
+	}	
+
+	function OptionAnalysis5() {
+		openOptionPages(["COP","DIS","ABT","TJX","XOM","NTAP","TGT","MS","ABNB","AMD","NVDA","ROST","BA","DDOG","JNJ","QCOM"]);
+			
+	}
+
+	function OptionAnalysis6() {
+		openOptionPages(["PEP","CVX","AVGO","GOOGL","SNOW","PG","TSM","ORCL","AMZN","TXN","IBM","AAPL","JPM","COIN","V","CRM","TSLA","PANW"]);
+	}	
+
+
+
 	function YMaxGood() {
 		const baseUrl = "https://finance.yahoo.com/quote/";
 		const urlSuffix = "/history?filter=div";
@@ -414,8 +469,17 @@
 		});
 	}		
 
-
-	function News() 
+	function openOptionPages(tickers) {
+		const baseUrl = "https://robinhood.com/options/chains/";
+		
+		tickers.forEach(ticker => {
+			window.open( baseUrl + ticker, '_blank');
+		});
+	}
+	
+	
+	
+		function News() 
 	{
 			const baseURLs = [
 				"https://stocknews.com/",
@@ -431,6 +495,64 @@
 				window.open(url, "_blank");
 				});
 	}
+	
+	
+	
+	
+	
+
+	function BarChartTechnical() 
+	{
+			const baseURLs = [
+				"https://www.barchart.com/stocks/most-active/volume-advances?viewName=technical&orderBy=opinion&orderDir=desc&page=all",
+				"https://www.barchart.com/stocks/most-active/price-volume-leaders?viewName=technical&orderBy=opinion&orderDir=desc&page=all",
+				"https://www.barchart.com/stocks/most-active/daily-volume-leaders?viewName=technical&orderBy=opinion&orderDir=desc&page=all",
+				"https://www.barchart.com/stocks/performance/gap/gap-up?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/performance/gap/gap-down?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/volume-advances?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/percent-change/advances?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/gap/gap-up?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/gap/gap-down?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/volume-advances?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/percent-change/advances?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/percent-change/declines?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/gap/gap-up?viewName=technical&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/gap/gap-down?viewName=technical&page=all",
+				"https://www.barchart.com/my/watchlist?watchlist=1341611&viewName=technical&orderBy=opinion&orderDir=desc&page=all"
+			];
+
+			baseURLs.forEach(url => { 
+				window.open(url, "_blank");
+				});
+	}
+	
+	
+
+	function BarChartMovingAverage() 
+	{
+			const baseURLs = [
+				"https://www.barchart.com/stocks/most-active/volume-advances?viewName=movingAverages&orderBy=opinion&orderDir=desc&page=all",
+				"https://www.barchart.com/stocks/most-active/price-volume-leaders?viewName=movingAverages&orderBy=opinion&orderDir=desc&page=all",
+				"https://www.barchart.com/stocks/most-active/daily-volume-leaders?viewName=movingAverages&orderBy=opinion&orderDir=desc&page=all",
+				"https://www.barchart.com/stocks/performance/gap/gap-up?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/performance/gap/gap-down?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/volume-advances?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/percent-change/advances?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/gap/gap-up?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/pre-market-trading/gap/gap-down?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/volume-advances?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/percent-change/advances?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/percent-change/declines?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/gap/gap-up?viewName=movingAverages&page=all",
+				"https://www.barchart.com/stocks/post-market-trading/gap/gap-down?viewName=movingAverages&page=all",
+				"https://www.barchart.com/my/watchlist?watchlist=1341611&viewName=movingAverages&orderBy=opinion&orderDir=desc&page=all"
+			];
+
+			baseURLs.forEach(url => { 
+				window.open(url, "_blank");
+				});
+	}
+	
 
 	
 	function searchKeyPress(e)

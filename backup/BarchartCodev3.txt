@@ -1,0 +1,348 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+using OfficeOpenXml;
+using System.IO;
+using System.Text.RegularExpressions;
+
+public class Program
+{
+    private static readonly HttpClient client = new HttpClient();
+
+    // Define a class to hold URL configurations
+    public class UrlConfig
+    {
+        public string InitUrl { get; set; }
+        public string TechnicalUrl { get; set; }
+        public string MovingAveragesUrl { get; set; }
+        public string TabName { get; set; }
+    }
+
+    public static async Task Main(string[] args)
+    {
+        // Set the license context for EPPlus
+        OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0");
+
+        // List of URL configurations
+        var urlConfigurations = new List<UrlConfig>
+        {
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/pre-market-trading/gap/gap-up",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapUpPercent&gt(preMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapUpPercent&gt(preMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pre-mkt-gap-up"
+            },
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/pre-market-trading/volume-advances",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pre-mkt-volume-advances"
+            },
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/pre-market-trading/percent-change/advances",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketPercentChange&gt(preMarketPercentChange%2C0)=lt(preMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketPercentChange&gt(preMarketPercentChange%2C0)=lt(preMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pre-mkt-change-advances"
+            },
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/performance/gap/gap-up",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapUpPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapUpPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "stocks-performance-gap-up"
+            },
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/most-active/volume-advances",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.percent_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=percentVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.percent_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CmovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=percentVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "MostActive-vol-advances"
+            },
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/most-active/price-volume-leaders",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=volume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=priceVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "MostActive-price-vol-leaders"
+            },
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/most-active/daily-volume-leaders",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=priceVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=volume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "MostActive-daily-vol-leaders"
+            },
+           new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/post-market-trading/volume-advances",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pst-mkt-volume-advances"
+            },
+           new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/post-market-trading/percent-change/advances",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pst-mkt-change-advances"
+            },
+           new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/post-market-trading/gap/gap-up",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapUpPercent&gt(postMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapUpPercent&gt(postMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pst-mkt-gap-up"
+            },
+
+           /*
+           new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/post-market-trading/gap/gap-down",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapDownPercent&lt(postMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapDownPercent&lt(postMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pst-mkt-gap-down"
+            },
+           new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/post-market-trading/percent-change/declines",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.declines&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.declines&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pst-mkt-change-declines"
+            },
+            new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/performance/gap/gap-down",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.declines.overall&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapDownPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.declines.overall&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapDownPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "stocks-performance-gap-down"
+            },
+           new UrlConfig
+            {
+                InitUrl = "https://www.barchart.com/stocks/pre-market-trading/gap/gap-down",
+                TechnicalUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapDownPercent&lt(preMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                MovingAveragesUrl = "https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapDownPercent&lt(preMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1",
+                TabName = "pre-mkt-gap-down"
+            }
+           */
+            // Add more URL configurations as needed
+        };
+
+        // Create the output directory
+        var outputDir = @"C:\Barchart\Output";
+        Directory.CreateDirectory(outputDir);
+
+        var now = DateTime.Now;
+        var fileName = Path.Combine(outputDir, $"Stock-Buy-{now:MM-dd-yyyy}-{now:hh-mmtt}-cst.xlsx".Replace("PM", "pm").Replace("AM", "am"));
+
+        using (var package = new ExcelPackage())
+        {
+            // Create a single consolidated worksheet
+            var consolidatedWorksheet = package.Workbook.Worksheets.Add($"100Buy-{now:MM-dd-yyyy}-{now:HH-mm-ss}");
+
+            // Initialize headers for the consolidated worksheet
+            SetupConsolidatedWorksheetHeaders(consolidatedWorksheet);
+
+            int row = 2; // Start from second row (first row is headers)
+
+            // Process each URL configuration
+            foreach (var config in urlConfigurations)
+            {
+                try
+                {
+                    // Reset the HttpClient for each request
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0");
+
+                    // Initialize the session and get the XSRF token
+                    var initResponse = await client.GetAsync(config.InitUrl);
+                    if (!initResponse.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine($"Error fetching initial cookies for {config.TabName}.");
+                        continue;
+                    }
+
+                    // Extract XSRF token from cookies
+                    var cookies = initResponse.Headers.GetValues("Set-Cookie");
+                    string xsrfToken = "";
+                    foreach (var cookie in cookies)
+                    {
+                        if (cookie.Contains("XSRF-TOKEN"))
+                        {
+                            xsrfToken = Uri.UnescapeDataString(cookie.Split(';')[0].Split('=')[1]);
+                            break;
+                        }
+                    }
+
+                    client.DefaultRequestHeaders.Add("X-XSRF-TOKEN", xsrfToken);
+
+                    // Fetch data from both URLs
+                    var response1 = await client.GetAsync(config.TechnicalUrl);
+                    var response2 = await client.GetAsync(config.MovingAveragesUrl);
+                    if (!response1.IsSuccessStatusCode || !response2.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine($"Error fetching data for {config.TabName}.");
+                        continue;
+                    }
+
+                    var responseData1 = await response1.Content.ReadAsStringAsync();
+                    var responseData2 = await response2.Content.ReadAsStringAsync();
+
+                    var data1 = JsonDocument.Parse(responseData1);
+                    var data2 = JsonDocument.Parse(responseData2);
+
+                    // Merge and process data
+                    var mergedData = ProcessStockData(data1, data2);
+
+                    // Add data to consolidated worksheet
+                    row = AddDataToConsolidatedWorksheet(consolidatedWorksheet, mergedData, config.TabName, row);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing {config.TabName}: {ex.Message}");
+                }
+            }
+
+            // Sort the worksheet by the Last Price column (column 3)
+            using (var range = consolidatedWorksheet.Cells[2, 1, consolidatedWorksheet.Dimension.End.Row, consolidatedWorksheet.Dimension.End.Column])
+            {
+                range.Sort(3); // Sort by the Last Price column
+            }
+
+            package.SaveAs(new FileInfo(fileName));
+            Console.WriteLine($"Data has been saved to {fileName}");
+        }
+    }
+
+    private static void SetupConsolidatedWorksheetHeaders(ExcelWorksheet worksheet)
+    {
+        worksheet.Cells[1, 1].Value = "Symbol";
+        worksheet.Cells[1, 2].Value = "Name";
+        worksheet.Cells[1, 3].Value = "Last";
+        worksheet.Cells[1, 4].Value = "20D Avg Vol";
+        worksheet.Cells[1, 5].Value = "20D MA";
+        worksheet.Cells[1, 6].Value = "50D MA";
+        worksheet.Cells[1, 7].Value = "100D MA";
+        worksheet.Cells[1, 8].Value = "200D MA";
+        worksheet.Cells[1, 9].Value = "Opinion";
+        worksheet.Cells[1, 10].Value = "Source Tab";
+    }
+
+    private static int AddDataToConsolidatedWorksheet(ExcelWorksheet worksheet, Dictionary<string, dynamic> mergedData, string tabName, int startRow)
+    {
+        // Filter and prepare data for the consolidated worksheet
+        var filteredData = mergedData.Values
+            .Where(d => d.Opinion == "100% Buy" && d.AvgVolume20D > 1000000)
+            .ToList();
+
+        int currentRow = startRow;
+        foreach (var item in filteredData)
+        {
+            worksheet.Cells[currentRow, 1].Value = item.Symbol;
+            worksheet.Cells[currentRow, 2].Value = item.Name;
+
+            // Format numeric columns
+            worksheet.Cells[currentRow, 3].Value = item.LastPrice;
+            worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "0.00";
+
+            worksheet.Cells[currentRow, 4].Value = item.AvgVolume20D;
+
+            worksheet.Cells[currentRow, 5].Value = item.MA20D;
+            worksheet.Cells[currentRow, 5].Style.Numberformat.Format = "0.00";
+
+            worksheet.Cells[currentRow, 6].Value = item.MA50D;
+            worksheet.Cells[currentRow, 6].Style.Numberformat.Format = "0.00";
+
+            worksheet.Cells[currentRow, 7].Value = item.MA100D;
+            worksheet.Cells[currentRow, 7].Style.Numberformat.Format = "0.00";
+
+            worksheet.Cells[currentRow, 8].Value = item.MA200D;
+            worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "0.00";
+
+            worksheet.Cells[currentRow, 9].Value = item.Opinion;
+            worksheet.Cells[currentRow, 10].Value = tabName;
+
+            currentRow++;
+        }
+
+        // Auto-fit columns after adding all data
+        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+        return currentRow;
+    }
+
+    private static Dictionary<string, dynamic> ProcessStockData(JsonDocument data1, JsonDocument data2)
+    {
+        // Create a dictionary to store merged data
+        var mergedData = new Dictionary<string, dynamic>();
+
+        // Process the first set of data
+        foreach (var item in data1.RootElement.GetProperty("data").EnumerateArray())
+        {
+            var symbol = item.GetProperty("symbol").GetString();
+            if (!mergedData.ContainsKey(symbol))
+            {
+                mergedData[symbol] = new
+                {
+                    Symbol = symbol,
+                    Name = item.GetProperty("symbolName").GetString(),
+                    LastPrice = GetDecimal(item.GetProperty("lastPrice")),
+                    AvgVolume20D = GetLong(item.GetProperty("averageVolume20d")),
+                    MA20D = (decimal?)null,
+                    MA50D = (decimal?)null,
+                    MA100D = (decimal?)null,
+                    MA200D = (decimal?)null,
+                    Opinion = GetOpinion(item.GetProperty("opinion"))
+                };
+            }
+        }
+
+        // Process the second set of data
+        foreach (var item in data2.RootElement.GetProperty("data").EnumerateArray())
+        {
+            var symbol = item.GetProperty("symbol").GetString();
+            if (mergedData.ContainsKey(symbol))
+            {
+                mergedData[symbol] = new
+                {
+                    Symbol = symbol,
+                    Name = mergedData[symbol].Name,
+                    LastPrice = mergedData[symbol].LastPrice,
+                    AvgVolume20D = mergedData[symbol].AvgVolume20D,
+                    MA20D = GetDecimal(item.GetProperty("movingAverage20d")),
+                    MA50D = GetDecimal(item.GetProperty("movingAverage50d")),
+                    MA100D = GetDecimal(item.GetProperty("movingAverage100d")),
+                    MA200D = GetDecimal(item.GetProperty("movingAverage200d")),
+                    Opinion = mergedData[symbol].Opinion
+                };
+            }
+        }
+
+        return mergedData;
+    }
+
+    private static decimal GetDecimal(JsonElement element)
+    {
+        var value = element.ValueKind == JsonValueKind.Number ? element.GetDecimal() : decimal.Parse(element.GetString().Replace(",", "").Replace("N/A", "0"));
+        return value;
+    }
+
+    private static long GetLong(JsonElement element)
+    {
+        var value = element.ValueKind == JsonValueKind.Number ? element.GetInt64() : long.Parse(element.GetString().Replace(",", "").Replace("N/A", "0"));
+        return value;
+    }
+
+    private static string GetOpinion(JsonElement element)
+    {
+        var match = Regex.Match(element.GetString(), @"\d+");
+        return match.Success && int.Parse(match.Value) == 100 ? "100% Buy" : "N/A";
+    }
+}

@@ -1,0 +1,136 @@
+###########################################################################################################################
+WebURL1 => https://www.barchart.com/stocks/most-active/volume-advances?viewName=technical&orderBy=opinion&orderDir=desc&page=all
+URL1 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.percent_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=percentVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+WebURL1 => https://www.barchart.com/stocks/most-active/volume-advances?viewName=movingAverages&orderBy=opinion&orderDir=desc&page=all
+URL1 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.percent_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=percentVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+initUrl  => https://www.barchart.com/stocks/most-active/volume-advances
+Name of the Tab => most-active-volume-advances
+
+
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/most-active/price-volume-leaders?viewName=technical&orderBy=opinion&orderDir=desc&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=priceVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/most-active/price-volume-leaders?viewName=movingAverages&orderBy=opinion&orderDir=desc&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=priceVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/most-active/price-volume-leaders
+
+Name of the Tab => most-active-price-volume-leaders
+
+
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/most-active/daily-volume-leaders?viewName=technical&orderBy=opinion&orderDir=desc&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=volume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/most-active/daily-volume-leaders?viewName=movingAverages&orderBy=opinion&orderDir=desc&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.volume.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=volume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/most-active/daily-volume-leaders
+
+Name of the Tab => most-active-daily-volume-leaders
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/performance/gap/gap-up?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapUpPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/performance/gap/gap-up?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.advances.overall&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapUpPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/performance/gap/gap-up
+
+Name of the Tab => stocks-performance-gap-up
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/performance/gap/gap-down?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.declines.overall&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapDownPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/performance/gap/gap-down?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.price_gaps.declines.overall&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=gapDownPercent&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/performance/gap/gap-down
+
+Name of the Tab => stocks-performance-gap-down
+
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/pre-market-trading/volume-advances?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/pre-market-trading/volume-advances?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/pre-market-trading/volume-advances
+
+Name of the Tab => pre-market-trading-volume-advances
+
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/pre-market-trading/percent-change/advances?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketPercentChange&gt(preMarketPercentChange%2C0)=lt(preMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/pre-market-trading/percent-change/advances?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketPercentChange&gt(preMarketPercentChange%2C0)=lt(preMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/pre-market-trading/percent-change/advances
+
+Name of the Tab => pre-market-percent-change-advances
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/pre-market-trading/gap/gap-up?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapUpPercent&gt(preMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/pre-market-trading/gap/gap-up?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapUpPercent&gt(preMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/pre-market-trading/gap/gap-up 
+
+Name of the Tab => pre-market-trading-gap-up
+
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/pre-market-trading/gap/gap-down?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapDownPercent&lt(preMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/pre-market-trading/gap/gap-down?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.premarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=preMarketGapDownPercent&lt(preMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/pre-market-trading/gap/gap-down
+
+Name of the Tab => pre-market-trading-gap-down
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/post-market-trading/volume-advances?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/post-market-trading/volume-advances
+
+URL1 => https://www.barchart.com/stocks/post-market-trading/volume-advances?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.volume_advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketVolume&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/post-market-trading/volume-advances
+
+
+Name of the Tab => post-market-trading-volume-advances
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/post-market-trading/percent-change/advances?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/post-market-trading/percent-change/advances?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.advances&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/post-market-trading/percent-change/advances
+
+Name of the Tab => post-market-trading-percent-change-advances
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/post-market-trading/percent-change/declines?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.declines&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/post-market-trading/percent-change/declines?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.declines&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketPercentChange&gt(postMarketPercentChange%2C0)=lt(postMarketPercentChange%2C0)&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/post-market-trading/percent-change/declines
+
+Name of the Tab => post-market-trading-percent-change-declines
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/post-market-trading/gap/gap-up?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapUpPercent&gt(postMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/post-market-trading/gap/gap-up?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_up&orderDir=desc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapUpPercent&gt(postMarketGapUpPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/post-market-trading/gap/gap-up
+
+Name of the Tab => post-market-trading-gap-up
+###########################################################################################################################
+URL1 => https://www.barchart.com/stocks/post-market-trading/gap/gap-down?viewName=technical&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2Copinion%2CrelativeStrength20d%2ChistoricVolatility20d%2CaverageVolume20d%2ClowPrice1y%2ChighPrice1y%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapDownPercent&lt(postMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+
+URL1 => https://www.barchart.com/stocks/post-market-trading/gap/gap-down?viewName=movingAverages&page=all
+URL2 => https://www.barchart.com/proxies/core-api/v1/quotes/get?lists=stocks.us.postmarket.gap_down&orderDir=asc&fields=symbol%2CsymbolName%2ClastPrice%2CmovingAverage20d%2CpercentFromMovingAverage20d%2CmovingAverage50d%2CpercentFromMovingAverage50d%2CmovingAverage100d%2CpercentFromMovingAverage100d%2CmovingAverage200d%2CpercentFromMovingAverage200d%2CsymbolCode%2CsymbolType%2ChasOptions&orderBy=postMarketGapDownPercent&lt(postMarketGapDownPercent%2C0)=&meta=field.shortName%2Cfield.type%2Cfield.description%2Clists.lastUpdate&hasOptions=true&raw=1
+initUrl  => https://www.barchart.com/stocks/post-market-trading/gap/gap-down
+
+Name of the Tab => post-market-trading-gap-down
+##########################################################################################################
