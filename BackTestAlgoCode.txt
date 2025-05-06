@@ -1,0 +1,271 @@
+// Main Backtest Program for Multiple Strategies with Excel Export
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using ClosedXML.Excel; // Add ClosedXML via NuGet
+
+class Candle
+{
+    public DateTime Date;
+    public double Open, High, Low, Close, Volume;
+    public double RSI;
+    public double MACD, MACDSignal;
+    public double SMA20;
+    public double BollingerUpper, BollingerLower;
+    public double SMA200;
+}
+
+class Trade
+{
+    public string Strategy;
+    public string Type;
+    public DateTime EntryDate;
+    public double EntryPrice;
+    public DateTime ExitDate;
+    public double ExitPrice;
+    public double Profit => Type == "LONG" ? ExitPrice - EntryPrice : EntryPrice - ExitPrice;
+}
+
+class Program
+{
+    static void Main()
+    {
+        var candles = LoadCsv("tsla_daily_historical-data-download-04-29-2025.csv");
+        candles.Reverse(); // Chronological order
+        CalculateRSI(candles, 9);
+        CalculateMACD(candles, 13, 26, 9);
+        CalculateSMA(candles, 20);
+        CalculateSMA(candles, 200);
+        CalculateBollingerBands(candles, 20, 2);
+
+        var allTrades = new List<Trade>();
+        allTrades.AddRange(BacktestRSITrend(candles));
+        allTrades.AddRange(BacktestMACD(candles));
+        allTrades.AddRange(BacktestBollingerBreakout(candles));
+        allTrades.AddRange(BacktestRSIExtremes(candles));
+
+        ExportToExcel(allTrades);
+    }
+
+    static void ExportToExcel(List<Trade> trades)
+    {
+        using var workbook = new XLWorkbook();
+        var grouped = trades.GroupBy(t => t.Strategy);
+
+        foreach (var group in grouped)
+        {
+            var ws = workbook.Worksheets.Add(group.Key);
+            ws.Cell(1, 1).Value = "Type";
+            ws.Cell(1, 2).Value = "Entry Date";
+            ws.Cell(1, 3).Value = "Entry Price";
+            ws.Cell(1, 4).Value = "Exit Date";
+            ws.Cell(1, 5).Value = "Exit Price";
+            ws.Cell(1, 6).Value = "Profit";
+
+            int row = 2;
+            foreach (var trade in group)
+            {
+                ws.Cell(row, 1).Value = trade.Type;
+                ws.Cell(row, 2).Value = trade.EntryDate;
+                ws.Cell(row, 3).Value = trade.EntryPrice;
+                ws.Cell(row, 4).Value = trade.ExitDate;
+                ws.Cell(row, 5).Value = trade.ExitPrice;
+                ws.Cell(row, 6).Value = trade.Profit;
+                row++;
+            }
+        }
+        workbook.SaveAs("BacktestResults.xlsx");
+    }
+
+    static List<Candle> LoadCsv(string path)
+    {
+        var list = new List<Candle>();
+        foreach (var line in File.ReadLines(path).Skip(1))
+        {
+            var parts = line.Split(',');
+            if (parts.Length < 8) continue;
+            list.Add(new Candle
+            {
+                Date = DateTime.Parse(parts[0]),
+                Open = double.Parse(parts[1], CultureInfo.InvariantCulture),
+                High = double.Parse(parts[2], CultureInfo.InvariantCulture),
+                Low = double.Parse(parts[3], CultureInfo.InvariantCulture),
+                Close = double.Parse(parts[4], CultureInfo.InvariantCulture),
+                Volume = double.Parse(parts[7], CultureInfo.InvariantCulture)
+            });
+        }
+        return list;
+    }
+
+    static void CalculateRSI(List<Candle> candles, int period)
+    {
+        double gain = 0, loss = 0;
+        for (int i = 1; i <= period; i++)
+        {
+            var delta = candles[i].Close - candles[i - 1].Close;
+            if (delta >= 0) gain += delta; else loss -= delta;
+        }
+        gain /= period; loss /= period;
+        candles[period].RSI = 100 - (100 / (1 + gain / loss));
+
+        for (int i = period + 1; i < candles.Count; i++)
+        {
+            var delta = candles[i].Close - candles[i - 1].Close;
+            double up = delta > 0 ? delta : 0, dn = delta < 0 ? -delta : 0;
+            gain = (gain * (period - 1) + up) / period;
+            loss = (loss * (period - 1) + dn) / period;
+            candles[i].RSI = 100 - (100 / (1 + gain / loss));
+        }
+    }
+
+    static void CalculateMACD(List<Candle> candles, int fast, int slow, int signal)
+    {
+        List<double> emaFast = EMA(candles.Select(c => c.Close).ToList(), fast);
+        List<double> emaSlow = EMA(candles.Select(c => c.Close).ToList(), slow);
+        List<double> macd = emaFast.Zip(emaSlow, (f, s) => f - s).ToList();
+        List<double> signalLine = EMA(macd, signal);
+
+        for (int i = 0; i < candles.Count; i++)
+        {
+            candles[i].MACD = i < macd.Count ? macd[i] : 0;
+            candles[i].MACDSignal = i < signalLine.Count ? signalLine[i] : 0;
+        }
+    }
+
+    static void CalculateSMA(List<Candle> candles, int period)
+    {
+        for (int i = period - 1; i < candles.Count; i++)
+        {
+            var avg = candles.Skip(i - period + 1).Take(period).Average(c => c.Close);
+            if (period == 20) candles[i].SMA20 = avg;
+            if (period == 200) candles[i].SMA200 = avg;
+        }
+    }
+
+    static void CalculateBollingerBands(List<Candle> candles, int period, double stdDev)
+    {
+        for (int i = period - 1; i < candles.Count; i++)
+        {
+            var window = candles.Skip(i - period + 1).Take(period).Select(c => c.Close).ToList();
+            double avg = window.Average();
+            double std = Math.Sqrt(window.Sum(x => Math.Pow(x - avg, 2)) / period);
+            candles[i].BollingerUpper = avg + stdDev * std;
+            candles[i].BollingerLower = avg - stdDev * std;
+        }
+    }
+
+    static List<double> EMA(List<double> prices, int period)
+    {
+        List<double> ema = new();
+        double multiplier = 2.0 / (period + 1);
+        ema.Add(prices.Take(period).Average());
+        for (int i = period; i < prices.Count; i++)
+            ema.Add(((prices[i] - ema.Last()) * multiplier) + ema.Last());
+        return Enumerable.Repeat(0.0, period - 1).Concat(ema).ToList();
+    }
+
+    static List<Trade> BacktestRSITrend(List<Candle> candles)
+    {
+        List<Trade> trades = new();
+        Trade current = null;
+        for (int i = 10; i < candles.Count; i++)
+        {
+            var c = candles[i];
+            if (current == null && c.RSI > 65)
+                current = new Trade { Strategy = "RSI Trend", Type = "LONG", EntryDate = c.Date, EntryPrice = c.Close };
+            else if (current == null && c.RSI < 35)
+                current = new Trade { Strategy = "RSI Trend", Type = "SHORT", EntryDate = c.Date, EntryPrice = c.Close };
+
+            else if (current?.Type == "LONG" && c.Low <= candles.Skip(i - 3).Take(3).Min(x => x.Low))
+            {
+                current.ExitDate = c.Date; current.ExitPrice = c.Close;
+                trades.Add(current); current = null;
+            }
+            else if (current?.Type == "SHORT" && c.High >= candles.Skip(i - 3).Take(3).Max(x => x.High))
+            {
+                current.ExitDate = c.Date; current.ExitPrice = c.Close;
+                trades.Add(current); current = null;
+            }
+        }
+        return trades;
+    }
+
+    static List<Trade> BacktestMACD(List<Candle> candles)
+    {
+        List<Trade> trades = new();
+        Trade current = null;
+        for (int i = 1; i < candles.Count; i++)
+        {
+            var prev = candles[i - 1];
+            var curr = candles[i];
+            bool crossAbove = prev.MACD < prev.MACDSignal && curr.MACD > curr.MACDSignal && curr.MACDSignal > 0;
+            bool crossBelow = prev.MACD > prev.MACDSignal && curr.MACD < curr.MACDSignal && curr.MACDSignal < 0;
+
+            if (current == null && crossAbove)
+                current = new Trade { Strategy = "MACD Crossover", Type = "LONG", EntryDate = curr.Date, EntryPrice = curr.Close };
+            else if (current == null && crossBelow)
+                current = new Trade { Strategy = "MACD Crossover", Type = "SHORT", EntryDate = curr.Date, EntryPrice = curr.Close };
+
+            else if (current?.Type == "LONG" && crossBelow)
+            {
+                current.ExitDate = curr.Date; current.ExitPrice = curr.Close;
+                trades.Add(current); current = null;
+            }
+            else if (current?.Type == "SHORT" && crossAbove)
+            {
+                current.ExitDate = curr.Date; current.ExitPrice = curr.Close;
+                trades.Add(current); current = null;
+            }
+        }
+        return trades;
+    }
+
+    static List<Trade> BacktestBollingerBreakout(List<Candle> candles)
+    {
+        var trades = new List<Trade>();
+        Trade current = null;
+        for (int i = 20; i < candles.Count; i++)
+        {
+            var c = candles[i];
+            if (current == null && c.Close > c.BollingerUpper)
+                current = new Trade { Strategy = "Bollinger Breakout", Type = "LONG", EntryDate = c.Date, EntryPrice = c.Close };
+            else if (current == null && c.Close < c.BollingerLower)
+                current = new Trade { Strategy = "Bollinger Breakout", Type = "SHORT", EntryDate = c.Date, EntryPrice = c.Close };
+
+            else if (current != null && c.Close <= c.SMA20 && current.Type == "LONG")
+            {
+                current.ExitDate = c.Date; current.ExitPrice = c.Close;
+                trades.Add(current); current = null;
+            }
+            else if (current != null && c.Close >= c.SMA20 && current.Type == "SHORT")
+            {
+                current.ExitDate = c.Date; current.ExitPrice = c.Close;
+                trades.Add(current); current = null;
+            }
+        }
+        return trades;
+    }
+
+    static List<Trade> BacktestRSIExtremes(List<Candle> candles)
+    {
+        var trades = new List<Trade>();
+        Trade current = null;
+        for (int i = 200; i < candles.Count; i++)
+        {
+            var c = candles[i];
+            if (current == null && c.RSI < 35 && c.Close > c.SMA200)
+                current = new Trade { Strategy = "RSI Extremes", Type = "LONG", EntryDate = c.Date, EntryPrice = c.Close };
+            else if (current == null && c.RSI > 65 && c.Close < c.SMA200)
+                current = new Trade { Strategy = "RSI Extremes", Type = "SHORT", EntryDate = c.Date, EntryPrice = c.Close };
+
+            else if (current != null && ((current.Type == "LONG" && c.RSI > 65) || (current.Type == "SHORT" && c.RSI < 35)))
+            {
+                current.ExitDate = c.Date; current.ExitPrice = c.Close;
+                trades.Add(current); current = null;
+            }
+        }
+        return trades;
+    }
+}

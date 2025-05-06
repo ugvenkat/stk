@@ -1,0 +1,195 @@
+Using CQG, the programming code for the MACD crossover system is written this way:
+Long Entry and Short Exit:
+MACD(@,13.000,26.000)[-1] XABOVE MACDA(@,13.000,26.000,
+9.000) [-1] AND MACDA(@,13.000,26.000,9.000) [-1] > 0
+Long Exit and Short Entry:
+MACD(@,13.000,26.000) [-1] XBELOW MACDA(@,13.000,26.000,
+9.000) [-1] AND MACDA(@,13.000,26.000,9.000) [-1] < 0
+
+Using CQG, the programming code for Bollinger Band breakout is written this way:
+Long Entry:
+Close(@)[-1] > BHI(@,Sim,20,2.00)[-1]
+Short Entry:
+Close(@)[-1]< BLO(@,Sim,20,2.00)[-1]
+Long Exit and Short Exit:
+MA(@,Sim,20)[-1]
+
+Using CQG, the programming code for RSI Trend is written this way:
+Long Entry:
+RSI(@,9)[-1] > 65
+Short Entry:
+RSI(@,9)[-1] < 35
+Long Exit:
+LoLevel(@,3)[-1]
+Short Exit:
+HiLevel(@,3)[-1]
+
+
+Using CQG, the programming code for short-term RSI trend is written this way:
+Long Entry:
+RSI(@,9)[-1] > 65
+Short Entry:
+RSI(@,9)[-1] < 35
+Long Exit:
+LoLevel(@,1)[-1]
+Short Exit:
+HiLevel(@,1)[-1]
+
+Using CQG, the programming code for this simple trend-following system is written this way:
+Long Entry:
+Close(@)[-1] > BHI(@,Sim,20,2.00)[-1] AND ADX(@,10)[-2]<20
+Long Exit, set "Price" field to:
+LoLevel(@,3)[-1]
+Short Entry:
+Close(@)[-1]< BLO(@,Sim,20,2.00)[-1] AND ADX(@,10)[-2] < 20
+Short Exit, set "Price" field to:
+HiLevel(@,3)[-1]
+
+Using CQG, the programming code for this high-volatility countertrend
+system is written this way:
+Long Entry:
+ADX(@,10)[-1] > 50 AND High(@)[-1] > High(@)[-2] AND RSI
+(@,9)[-1] < 35
+Long Exit:
+LoLevel(@,1)[-1] OR MA(@,Sim,20)[-1]
+Short Entry:
+ADX(@,10)[-1] > 50 AND Low(@)[-1] < Low(@)[-2] AND RSI
+(@,9)[-1] > 65
+Short Exit:
+HiLevel(@,1)[-1] OR MA(@,Sim,20)[-1]
+
+Using CQG, the programming code for this time-based exit criterion is written this way:
+Long Exit: BarsSinceEntry(@,0,All,ThisTradeOnly)
+> 1 OR Price field set to: "LoLevel(@,3)[-1]"
+Short Exit: BarsSinceEntry(@,0,All,ThisTradeOnly)
+> 1 OR Price field set to: "HiLevel(@,3)[-1]"
+
+Using CQG, the programming code for RSI Trend system with a three day high and low trailing stop is written this way:
+Long Entry:
+RSI(@,9)[-1] > 65
+Long Exit:
+LoLevel(@,3)[-1]
+Short Entry:
+RSI(@,9)[-1] < 35
+Short Exit:
+HiLevel(@,3)[-1]
+
+for RSI Trend system with a three day high and low trailing stop is written this way:
+Long Entry:
+RSI(@,9)[-1] > 65
+Long Exit:
+LoLevel(@,3)[-1]
+Short Entry:
+RSI(@,9)[-1] < 35
+Short Exit:
+HiLevel(@,3)[-1]
+
+Using CQG, the programming code for RSI Trend system with a 10-day high and low trailing stop is written this way:
+Long Entry:
+RSI(@,9)[-1] > 65
+Long Exit:
+LoLevel(@,10)[-1]
+Short Entry:
+RSI(@,9)[-1] < 35
+Short Exit:
+HiLevel(@,10)[-1]
+
+Using CQG, the programming code for RSI Trend with extreme readings exits is written this way:
+Long Entry:
+RSI(@,9)[-1] > 65
+Long Exit:
+LoLevel(@,10)[-1] OR RSI(@,9)[-1] > 80
+Short Entry:
+RSI(@,9)[-1] < 35
+Short Exit:
+HiLevel(@,10)[-1] OR RSI(@,9)[-1] < 20
+
+Using CQG, the programming code for the Ichimoku crossover system is written this way:
+Long Entry:
+Imoku1(@,9)[-1] > Imoku2(@,26)[-1]
+Long Exit:
+Imoku1(@,9)[-1] < Imoku2(@,26)[-1]
+Short Entry:
+Imoku1(@,9)[-1] < Imoku2(@,26)[-1]
+Short Exit:
+Imoku1(@,9)[-1] > Imoku2(@,26)[-1]
+
+Using CQG, the programming code for the Ichimoku Clouds crossover system is written this way:
+Long Entry:
+Imoku1(@,9)[-1] > Imoku2(@,26)[-1] AND Close(@)[-1] >
+Imoku3(@,52)[-27] AND Close(@)[-1] > Imoku4(@,9,26,Sim,1)
+[-27]
+Long Exit:
+Imoku1(@,9)[-1] < Imoku2(@,26)[-1] OR Close(@)[-1] <
+Imoku3(@,52)[-27] OR Close(@)[-1] < Imoku4(@,9,26,Sim,1)
+[-27]
+Short Entry:
+Imoku1(@,9)[-1] < Imoku2(@,26)[-1] AND Close(@)[-1] <
+Imoku3(@,52)[-27] AND Close(@)[-1] < Imoku4(@,9,26,Sim,1)
+[-27]
+Short Exit:
+Imoku1(@,9)[-1] > Imoku2(@,26)[-1] OR Close(@)[-1] >
+Imoku3(@,52)[-27] OR Close(@)[-1] > Imoku4(@,9,26,Sim,1)
+[-27]
+
+Using CQG, the programming code for the Bollinger Band breakout system is written this way:
+Long Entry:
+Close(@)[-1] > BHI(@,Sim,20,2.00)[-1]
+Short Entry:
+Close(@)[-1] < BLO(@,Sim,20,2.00)[-1]
+Long Exit and Short Exit:
+MA(@,Sim,20)[-1]
+
+Using CQG, the programming code for RSI Extremes is written this way:
+Long Entry:
+RSI(@,9)[-1] < 35 AND Close(@)[-1] > MA(@,Sim,200)[-1]
+Long Exit:
+RSI(@,9)[-1] > 65 OR OpenPositionAverageEntryPrice
+(@,ThisTradeOnly) - Dollar2Price(@,7500) / OpenPositionSize
+(@,ThisTradeOnly)
+Short Entry:
+RSI(@,9)[-1] > 65 AND Close(@)[-1] < MA(@,Sim,200)[-1]
+Short Exit:
+RSI(@,9)[-1] < 35 OR OpenPositionAverageEntryPrice
+(@,ThisTradeOnly) - Dollar2Price(@,7500) / OpenPositionSize
+(@,ThisTradeOnly)
+
+Using CQG, the programming code for RSI Extremes with volume filter is written this way:
+Long Entry:
+RSI(@,9)[-1] < 35 AND Close(@)[-1] > MA(@,Sim,200)[-1] AND
+Vol(@)[-2] > Vol(@)[-1]
+Long Exit:
+RSI(@,9)[-1] > 65 OR OpenPositionAverageEntryPrice
+(@,ThisTradeOnly) - Dollar2Price(@,7500) / OpenPositionSize
+(@,ThisTradeOnly)
+
+Using CQG, the programming code for RSI Extremes is written this way:
+Long Entry:
+RSI(@,9)[-1] < 35 AND Close(@)[-1] > MA(@,Sim,200)[-1]
+Long Exit:
+RSI(@,9)[-1] > 65 OR OpenPositionAverageEntryPrice
+(@,ThisTradeOnly) - Dollar2Price(@,7500) / OpenPositionSize
+(@,ThisTradeOnly)
+Short Entry:
+RSI(@,9)[-1] > 65 AND Close(@)[-1] < MA(@,Sim,200)[-1]
+Short Exit:
+RSI(@,9)[-1] < 35 OR OpenPositionAverageEntryPrice
+(@,ThisTradeOnly) - Dollar2Price(@,7500) / OpenPositionSize
+(@,ThisTradeOnly)
+
+Using CQG, the programming code for RSI Extremes with volume filter is written this way:
+Long Entry:
+RSI(@,9)[-1] < 35 AND Close(@)[-1] > MA(@,Sim,200)[-1] AND
+Vol(@)[-2] > Vol(@)[-1]
+Long Exit:
+RSI(@,9)[-1] > 65 OR OpenPositionAverageEntryPrice
+(@,ThisTradeOnly) - Dollar2Price(@,7500) / OpenPositionSize
+(@,ThisTradeOnly)
+
+Short Entry:
+RSI(@,9)[-1] > 65 AND Close(@)[-1] < MA(@,Sim,200)[-1] AND
+Vol(@)[-2] > Vol(@)[-1]
+Short Exit:
+RSI(@,9)[-1] < 35 OR OpenPositionAverageEntryPrice
+(@,ThisTradeOnly) - Dollar2Price(@,7500) / OpenPositionSize
+(@,ThisTradeOnly)
