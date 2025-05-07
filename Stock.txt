@@ -1,0 +1,129 @@
+CREATE TABLE StockDetails (
+    Ticker TEXT,
+    Cost REAL,
+    Shares INTEGER,
+    Provider TEXT
+);
+
+INSERT INTO StockDetails (Ticker, Cost, Shares, Provider) VALUES
+('TNA', 39.14, 1557, 'Merril'),
+('RIOT', 10.51, 925, 'Merril'),
+('LYFT', 12.85, 3000, 'Merril'),
+('SOFI', 16.16, 2000, 'Merril'),
+('CIFR', 5.04, 18, 'Merril'),
+('BTBT', 4.39, 500, 'Merril'),
+('CLSK', 12.48, 300, 'Merril'),
+('TNA', 39.03, 4, 'TAX_RH'),
+('RGTI', 12.22, 300, 'TAX_RH'),
+('CONY', 11.55, 2340, 'TAX_RH'),
+('MSTY', 25.05, 1000, 'TAX_RH'),
+('NVDY', 25.13, 100, 'TAX_RH'),
+('TNA', 39.03, 4, 'IRA_RH'),
+('RGTI', 11.91, 1000, 'IRA_RH'),
+('SOXL', 34.33, 4500, 'IRA_RH'),
+('CONY', 17.56, 4000, 'IRA_RH'),
+('MSTY', 28.34, 3078, 'IRA_RH'),
+('YBIT', 13.58, 711, 'IRA_RH'),
+('ULTY', 2.25, 8361, 'IRA_RH'),
+('TSLY', 11.62, 313, 'IRA_RH'),
+('PLUG', 2.15, 1000, 'IRA_RH'),
+('LYFT', 12.76, 279, 'Fidility'),
+('TSLY', 11.62, 25, 'Fidility'),
+('ULTY', 8.43, 178, 'Fidility'),
+('PLUG', 2.15, 1400, 'Fidility'),
+('CONY', 13.27, 83, 'WeBull'),
+('MSTY', 28.08, 35, 'TastyTrade');
+
+
+import { useState } from "react";
+import { Button, Input, Table } from "@/components/ui";
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+
+export default function StockSearch() {
+    const [ticker, setTicker] = useState("");
+    const [stocks, setStocks] = useState([]);
+
+    const fetchStockData = async () => {
+        if (!ticker) return;
+        const response = await fetch(`/api/stocks?ticker=${ticker}`);
+        const data = await response.json();
+        setStocks(data);
+    };
+
+    return (
+        <div className="p-6 max-w-lg mx-auto">
+            <h1 className="text-xl font-bold mb-4">Stock Lookup</h1>
+            <Input 
+                value={ticker} 
+                onChange={(e) => setTicker(e.target.value)} 
+                placeholder="Enter Ticker Symbol"
+            />
+            <Button onClick={fetchStockData} className="mt-2">Search</Button>
+            
+            {stocks.length > 0 && (
+                <Table className="mt-4">
+                    <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Cost</th>
+                            <th>Shares</th>
+                            <th>Provider</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {stocks.map((stock, index) => (
+                            <tr key={index}>
+                                <td>{stock.ticker}</td>
+                                <td>{stock.cost}</td>
+                                <td>{stock.shares}</td>
+                                <td>{stock.provider}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            )}
+        </div>
+    );
+}
+
+// Backend API route
+export async function handler(req, res) {
+    const db = await open({
+        filename: "./database.sqlite",
+        driver: sqlite3.Database,
+    });
+
+    const { ticker } = req.query;
+    const stocks = await db.all("SELECT * FROM StockDetails WHERE Ticker = ?", [ticker]);
+    res.json(stocks);
+}
+
+
+
+npx create-next-app@latest stock-app
+cd stock-app
+
+npm install sqlite3 sqlite
+
+
+Replace pages/index.js (or create a new component) with the given frontend code.
+In the pages/api/ directory, create a file stocks.js and move the backend API function inside it.
+
+sqlite3 database.sqlite
+
+CREATE TABLE StockDetails (
+    Ticker TEXT,
+    Cost REAL,
+    Shares INTEGER,
+    Provider TEXT
+);
+
+
+npm run dev
+
+
+
+Enter a stock ticker in the input box.
+Click the "Search" button.
+The stock data from SQLite should appear in the grid.
